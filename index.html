@@ -77,6 +77,15 @@
       margin-bottom: 0.5rem;
     }
 
+    .hotkey {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
     .stop-all {
       margin-top: 2rem;
       background: transparent;
@@ -105,10 +114,10 @@
 
   <script>
     const sounds = [
-      { file: 'audio/fahh.mp3',           label: 'Fahh',            emoji: '😩' },
-      { file: 'audio/liberal.mp3',         label: 'Liberal!',        emoji: '📢' },
-      { file: 'audio/arms-of-angel.mp3',   label: 'Arms of Angel',  emoji: '😢' },
-      { file: 'audio/vine-boom.mp3',       label: 'Vine Boom',      emoji: '💥' },
+      { file: 'audio/fahh.mp3',           label: 'Fahh',            emoji: '😩', key: '1' },
+      { file: 'audio/liberal.mp3',         label: 'Liberal!',        emoji: '📢', key: '2' },
+      { file: 'audio/arms-of-angel.mp3',   label: 'Arms of Angel',  emoji: '😢', key: '3' },
+      { file: 'audio/vine-boom.mp3',       label: 'Vine Boom',      emoji: '💥', key: '4' },
     ];
 
     const board = document.getElementById('board');
@@ -117,7 +126,7 @@
     sounds.forEach(s => {
       const btn = document.createElement('button');
       btn.className = 'btn';
-      btn.innerHTML = `<span class="emoji">${s.emoji}</span>${s.label}`;
+      btn.innerHTML = `<span class="emoji">${s.emoji}</span>${s.label}<span class="hotkey">${s.key}</span>`;
 
       const audio = new Audio(s.file);
       audio.preload = 'auto';
@@ -133,6 +142,22 @@
       });
 
       board.appendChild(btn);
+    });
+
+    // Keyboard shortcuts
+    const keyMap = new Map();
+    audioMap.forEach((audio, btn) => {
+      const s = sounds.find(s => s.label === btn.textContent.replace(/[^\w\s!]/g, '').trim().split('\n')[0]);
+    });
+    const btnList = [...board.children];
+    document.addEventListener('keydown', (e) => {
+      const idx = parseInt(e.key) - 1;
+      if (idx >= 0 && idx < btnList.length) {
+        btnList[idx].click();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('stopAll').click();
+      }
     });
 
     document.getElementById('stopAll').addEventListener('click', () => {
